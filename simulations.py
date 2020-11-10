@@ -93,7 +93,7 @@ setup.set_exposure_time(options.exposure_time)
 setup.intensity = options.intensity # Intensity in Hertz for simulations
 setup.noise = options.noise
 setup.efficiencies = [0.955631, 0.954148, 0.975911, 1.10216]
-setup.retardances = [pi/3, 2*pi*0.4995, 2*pi*0.2493, 2*pi*0.5129, 2*pi*0.2198, 2*pi*0.4799] # Waveplace retardances
+setup.retardances = [pi/2, 2*pi*0.4995, 2*pi*0.2493, 2*pi*0.5129, 2*pi*0.2198, 2*pi*0.4799] # Waveplace retardances
 # Hamiltonian evaluator
 H = MeanValue(setup, schwinger(options.m))
 
@@ -108,7 +108,7 @@ def callback_func(x):
     log_data(logfile, x, result)
 def target_func(x):
     return H(x)[0]
-x0 = [1,0,0,0,2,0]
+x0 = [1,1,1,1,2,11]
 #x0=np.random.uniform(0,2*pi,6)
 m = options.m
 #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
@@ -119,6 +119,16 @@ result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callba
 O = MeanValue(setup, {'hh':(0,0,1,0)})
 log_data(stdout, result.x, O(result.x))
 log_data(logfile, result.x, O(result.x))
+
+
+
+
+
+
+
+
+
+
 
 # Old SPSA parameters: a0=0.1, af=0, b0=0.1, bf=0.1
 #                      a0=0.05, af=0.01, b0=0.1, bf=0.02)
