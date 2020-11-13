@@ -7,22 +7,11 @@ from sys import stdout
 import numpy as np
 from scipy.optimize import minimize
 from math import pi
-
+from matplotlib import pyplot as plt
 from vqe import *
 from spsa import minimize_spsa
 
-# Gradient for SLSQP
-def gradient_slsqp(x0):
-    r = 3/2
-    der = np.zeros_like(x0)
-    x = np.copy(x0)
-    for i in range(len(x0)):
-        x[i] = x0[i] + pi/(4*r)
-        der[i] = r*target_func(x)
-        x[i] = x0[i] - pi/(4*r)
-        der[i] -= r*target_func(x)
-        x[i] = x0[i]
-    return der
+
 
 # Log functions
 def log_header(setup, H, logfile):
@@ -102,23 +91,49 @@ log_header(setup, H, stdout)
 log_header(setup, H, logfile)
 
 # Optimization
-def callback_func(x):
-    result = H(x)
-    log_data(stdout, x, result)
-    log_data(logfile, x, result)
-def target_func(x):
-    return H(x)[0]
-x0 = [1,1,1,1,2,11]
-#x0=np.random.uniform(0,2*pi,6)
-m = options.m
-#result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
+
+def optimization():
+    xx = []
+    def callback_func(x):
+        result = H(x)
+        xx.append(result)
+        #log_data(stdout, x, result)
+        #log_data(logfile, x, result)
+
+    def target_func(x):
+        return H(x)[0]
+    x0 = [1,1,1,1,2,11]
+
+    # Gradient for SLSQP#########################
+    def gradient_slsqp(x0):
+        r = 3 / 2
+        der = np.zeros_like(x0)
+        x = np.copy(x0)
+        for i in range(len(x0)):
+            x[i] = x0[i] + pi / (4 * r)
+            der[i] = r * target_func(x)
+            x[i] = x0[i] - pi / (4 * r)
+            der[i] -= r * target_func(x)
+            x[i] = x0[i]
+        return der
+
+
+
+    m = options.m
+    result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
         #a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
-result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callback=callback_func, options={'disp':True})
+    #result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callback=callback_func, options={'disp':True})
+
+
 
 # Order operator
-O = MeanValue(setup, {'hh':(0,0,1,0)})
-log_data(stdout, result.x, O(result.x))
-log_data(logfile, result.x, O(result.x))
+    O = MeanValue(setup, {'hh':(0,0,1,0)})
+#log_data(stdout, result.x, O(result.x))
+#log_data(logfile, result.x, O(result.x))
+    return min(min(xx))
+
+
+optimization()
 
 
 
@@ -128,9 +143,3 @@ log_data(logfile, result.x, O(result.x))
 
 
 
-
-
-# Old SPSA parameters: a0=0.1, af=0, b0=0.1, bf=0.1
-#                      a0=0.05, af=0.01, b0=0.1, bf=0.02)
-#        a0=0.01, af=0.003, b0=0.1, bf=0.02)
-#        a0=0.01/(0.2*abs(m)+1), af=0.003/(0.2*abs(m)+1), b0=0.1, bf=0.02)
