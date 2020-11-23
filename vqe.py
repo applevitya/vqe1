@@ -8,7 +8,7 @@ from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate
 
 
-def waveplate232(phi, delta):
+def waveplate(phi, delta):
     """Return waveplate matrix with retardance delta and axis angle phi.
     
     delta = pi for HWP
@@ -18,7 +18,7 @@ def waveplate232(phi, delta):
     R = 1j*sin(delta/2)*sin(2*phi)
     return np.array([[T, R], [-R.conjugate(), T.conjugate()]])
 
-def waveplate(phi, delta):
+def waveplate232(phi, delta):
     Y = Operator(RYGate(2*phi))
     Z = Operator(RZGate(delta))
 

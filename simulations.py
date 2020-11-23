@@ -47,7 +47,7 @@ parser.add_option('-l', '--log', default='vqe.dat',
         metavar='FILE', help='write output to FILE. Default "%default"')
 parser.add_option('-t', '--exposure-time', type='int', default=5000,
         metavar='TIME', help='set exposure time to TIME milliseconds. Default %default')
-parser.add_option('-N', '--iterations', type='int', default=250,
+parser.add_option('-N', '--iterations', type='int', default=550,
         metavar='ITER', help='number of iterations for optimization algorithm. Default %default')
 parser.add_option('-i', '--intensity', type='float', default=4000,
         metavar='HERTZ', help='intensity in Hertz that is used for simulations. Default %default')
@@ -97,7 +97,7 @@ def optimization():
     def callback_func(x):
         result = H(x)
         xx.append(result)
-        #log_data(stdout, x, result)
+        log_data(stdout, x, result)
         #log_data(logfile, x, result)
 
     def target_func(x):
@@ -106,7 +106,7 @@ def optimization():
 
     # Gradient for SLSQP#########################
     def gradient_slsqp(x0):
-        r = 3 / 2
+        r = 3/2
         der = np.zeros_like(x0)
         x = np.copy(x0)
         for i in range(len(x0)):
@@ -120,9 +120,9 @@ def optimization():
 
 
     m = options.m
-    result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
+    #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
         #a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
-    #result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callback=callback_func, options={'disp':True})
+    result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callback=callback_func, options={'disp':True})
 
 
 
@@ -130,16 +130,21 @@ def optimization():
     O = MeanValue(setup, {'hh':(0,0,1,0)})
 #log_data(stdout, result.x, O(result.x))
 #log_data(logfile, result.x, O(result.x))
+
     return min(min(xx))
 
 
-optimization()
+
+#a = np.random.normal(loc = 0, scale = 1, size = 5000)
 
 
 
+d1 = []
+for j in range(0,1,1):
+    d2 = optimization()
+    d1.append(d2)
 
-
-
-
+plt.hist(d1,bins=20)
+plt.show()
 
 
