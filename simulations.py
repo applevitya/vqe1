@@ -100,9 +100,12 @@ def optimization():
         log_data(stdout, x, result)
         #log_data(logfile, x, result)
 
+
+    points=[]
     def target_func(x):
+        points.append(H(x)[0])
         return H(x)[0]
-    x0 = [1,1,1,1,2,11]
+    x0 = [1,1,0,1,2,0]
 
     # Gradient for SLSQP#########################
     def gradient_slsqp(x0):
@@ -123,8 +126,8 @@ def optimization():
     #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
         #a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
     result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp, callback=callback_func, options={'disp':True})
-
-
+    iteration_number = [i for i in range(0,len(points))]
+    #plt.scatter(iteration_number, points, color='r', linestyle='--')
 
 # Order operator
     O = MeanValue(setup, {'hh':(0,0,1,0)})
