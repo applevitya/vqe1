@@ -1,6 +1,6 @@
 from qiskit import *
 from qiskit.visualization import plot_histogram
-
+from gradients import *
 from qiskit.tools.visualization import circuit_drawer
 from math import *
 
@@ -10,6 +10,7 @@ qc = QuantumCircuit(3,3)
 qc.h(0)
 qc.h(1)
 qc.ccx(0,1,2)
+
 #######################################
 
 
