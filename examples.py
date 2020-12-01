@@ -1,12 +1,12 @@
 from qiskit import *
 from qiskit.visualization import plot_histogram
-from gradients import *
+
 from qiskit.tools.visualization import circuit_drawer
 from math import *
 
 
 ############## Circuit ################
-qc = QuantumCircuit(3,3)
+qc = QuantumCircuit(3,1)
 qc.h(0)
 qc.h(1)
 qc.ccx(0,1,2)
@@ -20,7 +20,7 @@ print(execute(qc,simulation).result().get_statevector(qc))
 ##########################################
 
 # Measuremetns###
-qc.measure(2,2)
+qc.measure(2,0)
 #qc.measure([0, 1], [0, 1])
 backend = BasicAer.get_backend('qasm_simulator')
 job = execute(qc, backend)

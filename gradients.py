@@ -26,9 +26,7 @@ def derivative_U(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
 
-    return 2 * Operator(RYGate(2 * phi + pi / 2)).compose(Z.conjugate(), front=True).compose(Y.transpose(),
-                                                                                             front=True) - 2 * Y.compose(
-        Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)))
+    return 2 * Operator(RYGate(2 * phi + pi / 2)).compose(Z.conjugate(), front=True).compose(Y.transpose(),front=True) - 2 * Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)))
 
 
 def U_circuit(phi, N):
@@ -68,7 +66,7 @@ def U_circuit(phi, N):
 
 
 def B(phi, N):
-    phi =[1, 12, 23, 34, 44, 15]
+
     return (U_circuit(phi, 0).conjugate().transpose()).compose(Operator(HGate()).tensor(Operator(IGate())).compose(U_circuit(phi, N)))
 
 
@@ -89,10 +87,26 @@ def C_Gate(B, n):  # n-number of qubits
             C[n][m] = B[n-4][m-4]
 
 
-    return C
+    return Operator(C)
 
-# print((((U(1, pi / 2).compose(U(1, pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(Operator(CXGate())).compose((U(2, pi / 2).compose(U(2, pi))).tensor((U(2, pi / 2).compose(U(2, pi))))).data))
 
-phi = [1, 12, 23, 34, 44, 15]
-print(C_Gate(B(1,2),3))
+phi = [1, 1, 1, 1, 1, 1]
 
+#print((C_Gate(B(phi,0),3)).is_unitary())
+print(derivative_U(1,pi / 2).is_unitary())
+def hadamard_test(phi,N):
+    qc = QuantumCircuit(3, 1)
+    qc.h(2)
+    #qc.append(C_Gate(B(phi,N),3),[0,1,2])
+    qc.h(2)
+    qc.measure(2, 0)
+
+    backend = BasicAer.get_backend('qasm_simulator')
+    job = execute(qc, backend)
+    plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
+    qc.draw('mpl').show()
+    plt.show()
+
+
+
+#hadamard_test(phi,1)
