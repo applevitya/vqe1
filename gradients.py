@@ -21,13 +21,17 @@ def U(phi, delta):
     R = 1j * sin(delta / 2) * sin(2 * phi)
     return Operator([[T, R], [-R.conjugate(), T.conjugate()]])
 
+def derivative_U_12313131431(phi, delta):
+    T =  - 2j * sin(delta / 2) * sin(2 * phi)
+    R = 2j * sin(delta / 2) * cos(2 * phi)
+    return Operator([[T, R], [-R.conjugate(), T.conjugate()]])
 
 def derivative_U(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
 
-    return 2 * Operator(RYGate(2 * phi + pi / 2)).compose(Z.conjugate(), front=True).compose(Y.transpose(),front=True) - 2 * Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)))
-
+    return  Operator(RYGate(2 * phi + pi/2)).compose(Z.conjugate(), front=True).compose(Y.transpose(),front=True)
+# -2*Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)))
 
 def U_circuit(phi, N):
     if N == 0:
@@ -90,14 +94,16 @@ def C_Gate(B, n):  # n-number of qubits
     return Operator(C)
 
 
-phi = [1, 1, 1, 1, 1, 1]
+phi = [13, 12, 17, 51, 16, 31]
 
 #print((C_Gate(B(phi,0),3)).is_unitary())
-print(derivative_U(1,pi / 2).is_unitary())
+print(derivative_U(1,pi / 5).is_unitary())
+
+
 def hadamard_test(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
-    #qc.append(C_Gate(B(phi,N),3),[0,1,2])
+    qc.append(C_Gate(B(phi,N),3),[0,1,2])
     qc.h(2)
     qc.measure(2, 0)
 
@@ -109,4 +115,4 @@ def hadamard_test(phi,N):
 
 
 
-#hadamard_test(phi,1)
+hadamard_test(phi,4)
