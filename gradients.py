@@ -92,13 +92,58 @@ def C_Gate(B, n):  # n-number of qubits
 
 
     return Operator(C)
+################################################################################################
+def derivative_U2(phi, delta):
+    Y = Operator(RYGate(2 * phi))
+    Z = Operator(RZGate(delta))
+    return Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)))
+
+def U_circuit2(phi, N):
+    if N == 0:
+        return ((U(1, pi / 2).compose(U(1, pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate())).compose((U(2, pi / 2).compose(U(2, pi))).tensor((U(2, pi / 2).compose(U(2, pi)))))
+
+    if N == 1:
+        return (((derivative_U2(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(
+            Operator(XGate()).compose(Operator(IGate())))).compose(Operator(CXGate()))).compose(
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+    if N == 2:
+        return (((U(phi[0], pi / 2).compose(derivative_U2(phi[1], pi))).tensor(
+            Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate()))).compose(
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+    if N == 3:
+        return (
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate()))).compose(
+            (derivative_U2(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+    if N == 4:
+        return (
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate()))).compose(
+            (U(phi[2], pi / 2).compose(derivative_U2(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+    if N == 5:
+        return (
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate()))).compose(
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((derivative_U2(phi[4], pi / 2).compose(U(phi[5], pi)))))
+    if N == 6:
+        return (
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate()))).compose(
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(derivative_U2(phi[5], pi)))))
+
+def B2(phi, N):
+
+    return (U_circuit2(phi, 0).conjugate().transpose()).compose(Operator(HGate()).tensor(Operator(IGate())).compose(U_circuit2(phi, N)))
+
+
+
+
+
 
 
 phi = [13, 12, 17, 51, 16, 31]
-
-#print((C_Gate(B(phi,0),3)).is_unitary())
-print(derivative_U(1,pi / 5).is_unitary())
-
 
 def hadamard_test(phi,N):
     qc = QuantumCircuit(3, 1)
@@ -109,10 +154,19 @@ def hadamard_test(phi,N):
 
     backend = BasicAer.get_backend('qasm_simulator')
     job = execute(qc, backend)
-    plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
-    qc.draw('mpl').show()
-    plt.show()
+    #plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
+    #qc.draw('mpl').show()
+    #plt.show()
+    total = job.result().get_counts(qc)['0']
+    qc2 = QuantumCircuit(3, 1)
+    qc2.h(2)
+    qc2.append(C_Gate(B2(phi, N), 3), [0, 1, 2])
+    qc2.h(2)
+    qc2.measure(2, 0)
 
+    job = execute(qc2, backend)
 
+    total = (2*total + 2*job.result().get_counts(qc2)['0'])/1000 - 2
+    return total
 
-hadamard_test(phi,4)
+print(hadamard_test(phi,1))
