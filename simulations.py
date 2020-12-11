@@ -5,12 +5,12 @@ from optparse import OptionParser
 from sys import stdout
 
 import numpy as np
-from scipy.optimize import minimize
 from math import pi
 from matplotlib import pyplot as plt
 from vqe import *
 from gradients import *
 from spsa import minimize_spsa
+from scipy.optimize import minimize
 
 
 
@@ -87,9 +87,9 @@ setup.retardances = [pi/2, 2*pi*0.4995, 2*pi*0.2493, 2*pi*0.5129, 2*pi*0.2198, 2
 # Hamiltonian evaluator
 H = MeanValue(setup, schwinger(options.m))
 
-logfile = open(options.log, 'w')
-log_header(setup, H, stdout)
-log_header(setup, H, logfile)
+#logfile = open(options.log, 'w')
+#log_header(setup, H, stdout)
+#log_header(setup, H, logfile)
 
 # Optimization
 
@@ -98,7 +98,7 @@ def optimization():
     def callback_func(x):
         result = H(x)
         xx.append(result)
-        log_data(stdout, x, result)
+        #log_data(stdout, x, result)
         #log_data(logfile, x, result)
 
 
@@ -106,7 +106,7 @@ def optimization():
     def target_func(x):
         points.append(H(x)[0])
         return H(x)[0]
-    x0 = [1,1,0,1,2,0]
+    x0 = [13,11,25,15,25,15]
 
     # Gradient for SLSQP#########################
     def gradient_slsqp(x0):
@@ -122,11 +122,11 @@ def optimization():
         return der
 
     def gradient_slsqp_2(x0):
-        r = 3/2
         der = np.zeros_like(x0)
-        x = np.copy(x0)
-        for i in range(len(x0)):
-            der[i] = hadamard_test(x0,i+1)
+        for i in range(0,len(x0)):
+            j = i+1
+            der[i] = hadamard_test(x0,j)
+
         return der
 
 
@@ -134,7 +134,7 @@ def optimization():
     m = options.m
     #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
         #a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
-    result = minimize(target_func, x0=x0, method="SLSQP", jac=gradient_slsqp_2, callback=callback_func, options={'disp':True})
+    result = minimize(target_func, x0 = x0 ,method="BFGS", jac=gradient_slsqp, callback=callback_func, options={'disp':True, 'maxiter': 500})
     iteration_number = [i for i in range(0,len(points))]
     #plt.scatter(iteration_number, points, color='r', linestyle='--')
 
@@ -142,15 +142,15 @@ def optimization():
     O = MeanValue(setup, {'hh':(0,0,1,0)})
 #log_data(stdout, result.x, O(result.x))
 #log_data(logfile, result.x, O(result.x))
+#min(min(xx))
 
-    return min(min(xx))
+    return target_func(result.x)
 
 
 
 #a = np.random.normal(loc = 0, scale = 1, size = 5000)
 
-
-
+"""
 d1 = []
 for j in range(0,2,1):
     d2 = optimization()
@@ -158,5 +158,6 @@ for j in range(0,2,1):
 
 plt.hist(d1,bins=20)
 plt.show()
+"""
 
-
+print(optimization())

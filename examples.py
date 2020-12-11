@@ -28,3 +28,4 @@ plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="N
 qc.draw('mpl').show()
 plt.show()
 
+

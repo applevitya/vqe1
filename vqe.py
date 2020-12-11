@@ -1,6 +1,6 @@
 import numpy as np
 from math import *
-from scipy.stats import ortho_group
+from scipy.stats._multivariate import ortho_group
 from scipy.optimize import minimize
 import logging
 import datetime
