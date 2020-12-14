@@ -1,8 +1,13 @@
 #!/usr/bin/python3
 
+import sys
+#sys.path.insert(0, "/Users/viktorkrasnikov/Documents/GitHub/vqe1/scipy")
+
+
 import logging
 from optparse import OptionParser
 from sys import stdout
+
 
 import numpy as np
 from math import pi
