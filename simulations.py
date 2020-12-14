@@ -164,5 +164,10 @@ for j in range(0,2,1):
 plt.hist(d1,bins=20)
 plt.show()
 """
+b = optimization()
 
-print(optimization())
+with open("vq.txt", "w") as somefile:
+    somefile.write("\n"+str(b))
+
+    
+

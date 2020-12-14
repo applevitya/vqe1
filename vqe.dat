@@ -1,5 +1,0 @@
-# VQE log started 2020-12-11 00:21:56
-# Hamiltonian = {'hh': (1, 0, 1, 2), 'dd': (1, -1, -1, 1), 'rr': (1, -1, -1, 1)}
-# Exposure time = 5000 ms, simulations with intensity = 4000.0 Hz, noise = 0.000
-# Efficiencies = [0.955631, 0.954148, 0.975911, 1.10216]
-#     x0      x1      x2      x3      x4      x5   Hmean  Hstdev
