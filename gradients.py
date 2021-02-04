@@ -21,7 +21,7 @@ def U(phi, delta):
     R = 1j * sin(delta / 2) * sin(2 * phi)
     return Operator([[T, R], [-R.conjugate(), T.conjugate()]])
 
-def derivative_U_12313131431(phi, delta):
+def derivative_U1121212(phi, delta):
     T =  - 2j * sin(delta / 2) * sin(2 * phi)
     R = 2j * sin(delta / 2) * cos(2 * phi)
     return Operator([[T, R], [-R.conjugate(), T.conjugate()]])
@@ -142,7 +142,7 @@ def B2(phi, N):
 
 
 
-phi = [130, 192, 17, 51, 160, 31]
+#phi = [130, 192, 17, 51, 160, 31]
 
 
 
