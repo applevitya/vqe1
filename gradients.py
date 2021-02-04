@@ -3,7 +3,7 @@ from qiskit.visualization import plot_histogram
 from vqe import *
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate
-
+import numpy as np
 
 def waveplate(phi, delta):
     Y = Operator(RYGate(2 * phi))
@@ -95,7 +95,7 @@ def C_Gate(B, n):  # n-number of qubits
 def derivative_U2(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
-    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)), front= True)
+    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)).conjugate(), front= True)
 
 def U_circuit2(phi, N):
     if N == 0:
@@ -146,7 +146,7 @@ def B2(phi, N):
 
 
 
-def hadamard_test(phi,N):
+def hadamard_test121(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N),3),[0,1,2])
@@ -173,3 +173,19 @@ def hadamard_test(phi,N):
     #plt.show()
 
     return total
+
+def hadamard_test(phi,N):
+    qc = QuantumCircuit(3, 1)
+    qc.h(2)
+    qc.append(C_Gate(B(phi, N), 3), [0, 1, 2])
+    qc.h(2)
+
+    qc2 = QuantumCircuit(3, 1)
+    qc2.h(2)
+    qc2.append(C_Gate(B2(phi, N), 3), [0, 1, 2])
+    qc2.h(2)
+
+    simulation = Aer.get_backend('statevector_simulator')
+    stat_vector = execute(qc, simulation).result().get_statevector(qc)
+
+    return pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[4]),2)+pow(np.real(stat_vector[6]),2)
