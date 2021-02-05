@@ -7,7 +7,7 @@ import sys
 import logging
 from optparse import OptionParser
 from sys import stdout
-
+import random
 
 import numpy as np
 from math import pi
@@ -111,7 +111,7 @@ def optimization():
     def target_func(x):
         points.append(H(x)[0])
         return H(x)[0]
-    x0 = [13,11,25,15,25,0]
+    x0 = [random.randint(0,300),random.randint(0,300),random.randint(0,300),random.randint(0,300),random.randint(0,300),random.randint(0,300)]
 
     # Gradient for SLSQP#########################
     def gradient_slsqp(x0):
@@ -157,7 +157,7 @@ def optimization():
 
 
 d1 = []
-for j in range(0,3,1):
+for j in range(0,6,1):
     d2 = optimization()
     d1.append(d2)
 
