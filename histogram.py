@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-with open('/Users/viktorkrasnikov/Desktop/Vqe_data/vqe:BFGS.txt', 'r') as file:
+with open('Vqe_data/vqe:BFGS.txt', 'r') as file:
     nums = [row.strip() for row in file]
 nums = list(map(float, nums))
 
