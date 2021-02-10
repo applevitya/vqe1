@@ -146,7 +146,7 @@ def B2(phi, N):
 
 
 
-def hadamard_test121(phi,N):
+def hadamard_test(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N),3),[0,1,2])
@@ -174,7 +174,7 @@ def hadamard_test121(phi,N):
 
     return total
 
-def hadamard_test(phi,N):
+def hadamard_test121(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N), 3), [0, 1, 2])
