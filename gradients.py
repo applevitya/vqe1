@@ -146,7 +146,7 @@ def B2(phi, N):
 
 
 
-def hadamard_test(phi,N):
+def hadamard_test121(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N),3),[0,1,2])
@@ -174,7 +174,7 @@ def hadamard_test(phi,N):
 
     return total
 
-def hadamard_test121(phi,N):
+def hadamard_test(phi,N):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N), 3), [0, 1, 2])
@@ -187,5 +187,8 @@ def hadamard_test121(phi,N):
 
     simulation = Aer.get_backend('statevector_simulator')
     stat_vector = execute(qc, simulation).result().get_statevector(qc)
+    stat_vector_2  = execute(qc2, simulation).result().get_statevector(qc2)
+    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[4]),2)+pow(np.real(stat_vector[6]),2)
+    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[4]),2)+pow(np.real(stat_vector_2[6]),2)
 
-    return pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[4]),2)+pow(np.real(stat_vector[6]),2)
+    return 8*total_1+8*total_2 - 8

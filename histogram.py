@@ -4,12 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-with open('Vqe_data/vqe:BFGS.txt', 'r') as file:
+with open('Vqe_data/vqe_SLSQP2.txt', 'r') as file:
     nums = [row.strip() for row in file]
 nums = list(map(float, nums))
 
 
-plt.hist(nums,bins=int(len(nums)/100), color = 'blue',density=True)
+plt.hist(nums,bins=int(len(nums)/20), color = 'blue',density=True)
 # Plot formatting
 
 plt.ylabel('')
