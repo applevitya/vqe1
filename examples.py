@@ -23,7 +23,7 @@ shots = 10000
 results = execute(qc, backend=Aer.get_backend('qasm_simulator'), shots=shots).result()
 answer = results.get_counts()
 
-plot_histogram(answer).show()
+#plot_histogram(answer).show()
 
 '''
 # Measuremetns###
