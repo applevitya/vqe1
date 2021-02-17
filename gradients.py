@@ -2,8 +2,19 @@ from qiskit import *
 from qiskit.visualization import plot_histogram
 from vqe import *
 from qiskit.quantum_info.operators import Operator
-from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate
+from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate
 import numpy as np
+
+
+def schwinger_matrix(m):
+    I = Operator(IGate())
+    X = Operator(XGate())
+    Y = Operator(YGate())
+    Z = Operator(ZGate())
+    return X.expand(X)+I.expand(I)
+    #I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
+
+
 
 def waveplate(phi, delta):
     Y = Operator(RYGate(2 * phi))
@@ -34,43 +45,43 @@ def derivative_U(phi, delta):
 
 def U_circuit(phi, N):
     if N == 0:
-        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
-            Operator(CXGate())).compose((U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate())).compose((U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
 
     if N == 1:
-        return (((derivative_U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(
+        return (((derivative_U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(
             Operator(XGate()).compose(Operator(IGate())))).compose(Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 2:
-        return (((U(phi[0], pi / 2).compose(derivative_U(phi[1], pi))).tensor(
+        return (((U(phi[0], pi / 2).compose(derivative_U(phi[1], pi))).expand(
             Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 3:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (derivative_U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (derivative_U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 4:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(derivative_U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(derivative_U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 5:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((derivative_U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((derivative_U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 6:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(derivative_U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(derivative_U(phi[5], pi)))))
 
 
 def B(phi, N):
 
-    return (U_circuit(phi, 0).conjugate().transpose()).compose(Operator(IGate()).tensor(Operator(HGate())).compose(U_circuit(phi, N),front= True),front=True)
+    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0).compose(U_circuit(phi, N),front= True),front=True)
 
 
 def C_Gate(B, n):  # n-number of qubits
@@ -117,51 +128,52 @@ def derivative_U2(phi, delta):
 
 def U_circuit2(phi, N):
     if N == 0:
-        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
-            Operator(CXGate())).compose((U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(CXGate())).compose((U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
 
     if N == 1:
-        return (((derivative_U2(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(
+        return (((derivative_U2(phi[0], pi / 2).compose(U(phi[1], pi))).expand(
             Operator(XGate()).compose(Operator(IGate())))).compose(Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 2:
-        return (((U(phi[0], pi / 2).compose(derivative_U2(phi[1], pi))).tensor(
+        return (((U(phi[0], pi / 2).compose(derivative_U2(phi[1], pi))).expand(
             Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 3:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (derivative_U2(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (derivative_U2(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 4:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(derivative_U2(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(derivative_U2(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 5:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((derivative_U2(phi[4], pi / 2).compose(U(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((derivative_U2(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 6:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).tensor(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
             Operator(CXGate()))).compose(
-            (U(phi[2], pi / 2).compose(U(phi[3], pi))).tensor((U(phi[4], pi / 2).compose(derivative_U2(phi[5], pi)))))
+            (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(derivative_U2(phi[5], pi)))))
 
 def B2(phi, N):
 
-    return (U_circuit2(phi, 0).conjugate().transpose()).compose(Operator(IGate()).tensor(Operator(HGate())).compose(U_circuit2(phi, N),front= True),front= True)
+    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0).compose(U_circuit2(phi, N),front= True),front= True)
 
 
 
 
 
 
+phi = [1, 1, 1,2 , 1, 3]
 
-#phi = [1, 1, 1,2 , 1, 3]
-
+print(B(phi,3).is_unitary())
+print(schwinger_matrix(0).is_unitary())
 
 
 def hadamard_test(phi,N):
