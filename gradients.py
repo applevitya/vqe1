@@ -6,13 +6,25 @@ from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGat
 import numpy as np
 
 
-def schwinger_matrix(m):
+def schwinger_matrix(m, k): #k  
     I = Operator(IGate())
     X = Operator(XGate())
     Y = Operator(YGate())
     Z = Operator(ZGate())
-    return X.expand(X)+I.expand(I)
-    #I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
+    if k == 1:
+        return I.expand(I)
+    if k == 2:
+        return 2*X.expand(X)
+    if k == 3:
+        return 2*Y.expand(Y)
+    if k == 4:
+        return -0.5*Z.expand(I) 
+    if k == 5:
+        return 0.5*Z.expand(Z)
+    if k == 6:
+        return 0.5*m*I.expand(Z)
+    if k == 7:
+        return -0.5*m*Z.expand(I)               #I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
 
 
 
@@ -81,10 +93,10 @@ def U_circuit(phi, N):
 
 def B(phi, N):
 
-    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0).compose(U_circuit(phi, N),front= True),front=True)
+    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,1).compose(U_circuit(phi, N),front= True),front=True)
 
 
-def C_Gate(B, n):  # n-number of qubits
+def C_Gate(B,n):  # n-number of qubits
     B=B.data
     x, y = 8, 8
     C = [[0 for j in range(y)] for i in range(x)]
@@ -163,7 +175,7 @@ def U_circuit2(phi, N):
 
 def B2(phi, N):
 
-    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0).compose(U_circuit2(phi, N),front= True),front= True)
+    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,1).compose(U_circuit2(phi, N),front= True),front= True)
 
 
 
@@ -173,7 +185,7 @@ def B2(phi, N):
 phi = [1, 1, 1,2 , 1, 3]
 
 print(B(phi,3).is_unitary())
-print(schwinger_matrix(0).is_unitary())
+print(schwinger_matrix(0,1).is_unitary())
 
 
 def hadamard_test(phi,N):
