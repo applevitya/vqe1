@@ -2,11 +2,11 @@ from qiskit import *
 from qiskit.visualization import plot_histogram
 from vqe import *
 from qiskit.quantum_info.operators import Operator
-from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate
+from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate, CCXGate
 import numpy as np
 
 
-def schwinger_matrix(m, k): #k  
+def schwinger_matrix(m, k): #k  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
     I = Operator(IGate())
     X = Operator(XGate())
     Y = Operator(YGate())
@@ -14,27 +14,29 @@ def schwinger_matrix(m, k): #k
     if k == 1:
         return I.expand(I)
     if k == 2:
-        return 2*X.expand(X)
+        return X.expand(X)
     if k == 3:
-        return 2*Y.expand(Y)
-    if k == 4:
-        return -0.5*Z.expand(I) 
+        return Y.expand(Y)
     if k == 5:
-        return 0.5*Z.expand(Z)
+        return Z.expand(I)
+    if k == 4:
+        return Z.expand(Z)
     if k == 6:
-        return 0.5*m*I.expand(Z)
+        return I.expand(Z)
     if k == 7:
-        return -0.5*m*Z.expand(I)               #I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
+        return Z.expand(I)
+#I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))
 
 
 
-def waveplate(phi, delta):
+
+def U(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
     return ((Y.transpose()).compose(Z.conjugate().compose(Y)))
 
 
-def U(phi, delta):
+def waveplate(phi, delta):
     """Return waveplate matrix with retardance delta and axis angle phi.
 
     delta = pi for HWP
@@ -57,43 +59,43 @@ def derivative_U(phi, delta):
 
 def U_circuit(phi, N):
     if N == 0:
-        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+        return ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()))).compose(
             Operator(CXGate())).compose((U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
 
     if N == 1:
         return (((derivative_U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(
-            Operator(XGate()).compose(Operator(IGate())))).compose(Operator(CXGate()))).compose(
+            Operator(XGate()))).compose(Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 2:
         return (((U(phi[0], pi / 2).compose(derivative_U(phi[1], pi))).expand(
-            Operator(XGate()).compose(Operator(IGate())))).compose(
+            Operator(XGate()))).compose(
             Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 3:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()))).compose(
             Operator(CXGate()))).compose(
             (derivative_U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 4:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()))).compose(
             Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(derivative_U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 5:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()))).compose(
             Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((derivative_U(phi[4], pi / 2).compose(U(phi[5], pi)))))
     if N == 6:
         return (
-        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()).compose(Operator(IGate())))).compose(
+        ((U(phi[0], pi / 2).compose(U(phi[1], pi))).expand(Operator(XGate()))).compose(
             Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(derivative_U(phi[5], pi)))))
 
 
-def B(phi, N):
+def B(phi, N, k):
 
-    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,1).compose(U_circuit(phi, N),front= True),front=True)
+    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit(phi, N),front= True),front=True)
 
 
 def C_Gate(B,n):  # n-number of qubits
@@ -173,37 +175,29 @@ def U_circuit2(phi, N):
             Operator(CXGate()))).compose(
             (U(phi[2], pi / 2).compose(U(phi[3], pi))).expand((U(phi[4], pi / 2).compose(derivative_U2(phi[5], pi)))))
 
-def B2(phi, N):
+def B2(phi, N, k):
 
-    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,1).compose(U_circuit2(phi, N),front= True),front= True)
+    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
 
+phi = [6, 1, 2,6 , 5, 6]
 
-
-
-
-
-phi = [1, 1, 1,2 , 1, 3]
-
-print(B(phi,3).is_unitary())
-print(schwinger_matrix(0,1).is_unitary())
+#print(B(phi,3).is_unitary())
+#print(schwinger_matrix(0,1).is_unitary())
 
 
-def hadamard_test(phi,N):
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
-    qc.h(0)
-    qc.append(C_Gate(B(phi,N),3),[0,1,2])
-    qc.h(0)
-    qc.measure(0, 0)
+    qc.h(2)
+    qc.append(C_Gate(B(phi,N,k),3),[0,1,2])
+    qc.h(2)
+    qc.measure(2, 0)
     #qc.draw('mpl').show()
 
     qc2 = QuantumCircuit(3, 1)
-    qc2.h(0)
-    qc2.append(C_Gate(B2(phi, N), 3), [0, 1, 2])
-    qc2.h(0)
-    qc2.measure(0, 0)
-
-
-
+    qc2.h(2)
+    qc2.append(C_Gate(B2(phi, N, k), 3), [0, 1, 2])
+    qc2.h(2)
+    qc2.measure(2, 0)
 
     backend = BasicAer.get_backend('qasm_simulator')
     backend_2 = BasicAer.get_backend('qasm_simulator')
@@ -212,31 +206,43 @@ def hadamard_test(phi,N):
     total = job.result().get_counts(qc)['0']
     total2 = job2.result().get_counts(qc2)['0']
 
-
     #plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
     #qc.draw('mpl').show()
     #plt.show()
 
     return 8*total/10000+8*total2/10000-8
 
-def hadamard_test1221(phi,N):
+
+
+
+
+def hadamard1212(phi,N,k):
+    X = Operator(XGate())
     qc = QuantumCircuit(3, 1)
-    qc.h(0)
-    qc.append(C_Gate(B(phi, N), 3), [0, 1, 2])
-    qc.h(0)
+    qc.h(2)
+    qc.append(C_Gate(B(phi, N, k),3),[0,1,2])
+    qc.h(2)
+    #qc.draw('mpl').show()
+
 
     qc2 = QuantumCircuit(3, 1)
-    qc2.h(0)
-    qc2.append(C_Gate(B2(phi, N), 3), [0, 1, 2])
-    qc2.h(0)
+    qc2.h(2)
+    qc2.append(C_Gate(B2(phi, N, k), 3), [0, 1, 2])
+    qc2.h(2)
 
     simulation = Aer.get_backend('statevector_simulator')
     stat_vector = execute(qc, simulation).result().get_statevector(qc)
     stat_vector_2  = execute(qc2, simulation).result().get_statevector(qc2)
-    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[1]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[3]),2)
-    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[1]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[3]),2)
+    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[4]),2)+pow(np.real(stat_vector[6]),2)
+    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[4]),2)+pow(np.real(stat_vector_2[6]),2)
 
     return (8*total_1+8*total_2-8)
+
+def hadamard_test(phi, N):
+    return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
+
+
+print(hadamard(phi,2,2))
 
 
 
