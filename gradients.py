@@ -179,7 +179,7 @@ def B2(phi, N, k):
 
     return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
 
-#phi = [6, 1, 2,6 , 5, 6]
+phi = [6, 1, 2,6 , 5, 6]
 
 #print(B(phi,3).is_unitary())
 #print(schwinger_matrix(0,1).is_unitary())
@@ -242,7 +242,7 @@ def hadamard_test(phi, N):
     return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
 
 
-#print(hadamard(phi,2,2))
+print(hadamard(phi,2,2))
 
 
 
