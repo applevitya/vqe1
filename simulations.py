@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 
-import sys
-# sys.path.insert(0, "/Users/viktorkrasnikov/Documents/GitHub/vqe1/scipy")
-
-
 import logging
 from optparse import OptionParser
 from sys import stdout
@@ -104,8 +100,8 @@ H = MeanValue(setup, schwinger(options.m))
 # log_header(setup, H, stdout)
 # log_header(setup, H, logfile)
 
-# Optimization
 
+# Optimization
 def optimization():
     points = []
     def callback_func(x):
@@ -159,11 +155,11 @@ def optimization():
     return target_func(result.x)
 
 
-d1 = []
-for j in range(0, 1, 1):
-    d2 = optimization()
-    d1.append(d2)
+#d1 = []
+#for j in range(0, 1, 1):
+    #d2 = optimization()
+    #d1.append(d2)
 
 #plt.hist(d1, bins=10)
-plt.show()
+#plt.show()
 
