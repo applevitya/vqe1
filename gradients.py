@@ -98,7 +98,7 @@ def B(phi, N, k):
     return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit(phi, N),front= True),front=True)
 
 
-def C_Gate(B,n):  # n-number of qubits
+def C_Gate(B):  # n-number of qubits
     B=B.data
     x, y = 8, 8
     C = [[0 for j in range(y)] for i in range(x)]
@@ -134,7 +134,7 @@ def C_Gate_new(B, n):  # n-number of qubits
 
 
 
-################################################################################################
+#################################circuit -- 2##########################################################
 def derivative_U2(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
@@ -179,23 +179,18 @@ def B2(phi, N, k):
 
     return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
 
-#phi = [6, 1, 2,6 , 5, 6]
 
-#print(B(phi,3).is_unitary())
-#print(schwinger_matrix(0,1).is_unitary())
-
-
-def hadamard(phi,N,k):
+def hadamard121(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
-    qc.append(C_Gate(B(phi,N,k),3),[0,1,2])
+    qc.append(C_Gate(B(phi,N,k)),[0,1,2])
     qc.h(2)
     qc.measure(2, 0)
     #qc.draw('mpl').show()
 
     qc2 = QuantumCircuit(3, 1)
     qc2.h(2)
-    qc2.append(C_Gate(B2(phi, N, k), 3), [0, 1, 2])
+    qc2.append(C_Gate(B2(phi, N, k)), [0, 1, 2])
     qc2.h(2)
     qc2.measure(2, 0)
 
@@ -205,36 +200,30 @@ def hadamard(phi,N,k):
     job2 = execute(qc2, backend_2,shots=10000)
     total = job.result().get_counts(qc)['0']
     total2 = job2.result().get_counts(qc2)['0']
-
     #plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
     #qc.draw('mpl').show()
     #plt.show()
-
     return 8*total/10000+8*total2/10000-8
 
 
-
-
-
-def hadamard1212(phi,N,k):
-    X = Operator(XGate())
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
-    qc.append(C_Gate(B(phi, N, k),3),[0,1,2])
+    qc.append(C_Gate(B(phi, N, k)),[0,1,2])
     qc.h(2)
     #qc.draw('mpl').show()
 
 
     qc2 = QuantumCircuit(3, 1)
     qc2.h(2)
-    qc2.append(C_Gate(B2(phi, N, k), 3), [0, 1, 2])
+    qc2.append(C_Gate(B2(phi, N, k)), [0, 1, 2])
     qc2.h(2)
 
     simulation = Aer.get_backend('statevector_simulator')
     stat_vector = execute(qc, simulation).result().get_statevector(qc)
     stat_vector_2  = execute(qc2, simulation).result().get_statevector(qc2)
-    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[4]),2)+pow(np.real(stat_vector[6]),2)
-    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[4]),2)+pow(np.real(stat_vector_2[6]),2)
+    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[1]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[3]),2)
+    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[1]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[3]),2)
 
     return (8*total_1+8*total_2-8)
 
@@ -242,7 +231,5 @@ def hadamard_test(phi, N):
     return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
 
 
-
-
-
+#phi = [1,1,1,1,1,1]
 

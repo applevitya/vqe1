@@ -102,6 +102,7 @@ H = MeanValue(setup, schwinger(options.m))
 
 
 # Optimization
+x0 = np.random.uniform(0, 2 * pi, 6)
 def optimization():
     points = []
     def callback_func(x):
@@ -115,7 +116,7 @@ def optimization():
     def target_func(x):
         return H(x)[0]
 
-    x0 = np.random.uniform(0, 2 * pi, 6)
+
 
     # x0 = [5.04116483e-03, 1.09884935e+00, 8.26706055e-01, 3.41551829e+00,4.01166258e+00, 5.30849340e+00]
     # x0 = [-8.96511828, 4.62359229, 4.44776618, 3.25604477, 1.46245918, 1.77980848]
@@ -140,9 +141,9 @@ def optimization():
         return der
 
     m = options.m
-    result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
+    #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
     # a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
-    #result = minimize(target_func, x0=x0, callback=callback_func, method="SLSQP", jac=gradient_slsqp_2,options={'disp': True, 'maxiter': 500, 'eps': 0, 'ftol': 0})
+    result = minimize(target_func, x0=x0, callback=callback_func, method="SLSQP", jac=gradient_slsqp_2,options={'disp': True, 'maxiter': 300, 'eps': 0})
     iteration_number = [i for i in range(0, len(points))]
     plt.scatter(iteration_number, points, color='g', linestyle='--')
 
@@ -154,12 +155,13 @@ def optimization():
 
     return result.x
 
-print(optimization())
-#d1 = []
-#for j in range(0, 1, 1):
-    #d2 = optimization()
-    #d1.append(d2)
+
+d1 = []
+for j in range(0, 1, 1):
+    d2 = optimization()
+    d1.append(d2)
 
 #plt.hist(d1, bins=10)
-#plt.show()
+plt.show()
+
 
