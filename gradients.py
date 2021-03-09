@@ -1,10 +1,13 @@
 from qiskit import *
-from qiskit.visualization import plot_histogram
+from qiskit.visualization import plot_histogram, plot_state_city
 from vqe import *
+from qiskit.providers.aer import QasmSimulator, StatevectorSimulator
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate, CCXGate
 import numpy as np
 
+from qiskit.test.mock import FakeVigo
+device_backend = FakeVigo()
 
 def schwinger_matrix(m, k): #k  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
     I = Operator(IGate())
@@ -231,5 +234,7 @@ def hadamard_test(phi, N):
     return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
 
 
-#phi = [1,1,1,1,1,1]
+#phi = [1,2,2,3,2,2]
+
+
 

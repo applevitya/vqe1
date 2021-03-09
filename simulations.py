@@ -143,7 +143,7 @@ def optimization():
     m = options.m
     #result = minimize_spsa(target_func, callback=callback_func, x0=x0, maxiter=options.iterations,a0=0.01, af=0.01, b0=0.1, bf=0.02)
     # a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
-    result = minimize(target_func, x0=x0, callback=callback_func, method="SLSQP", jac=gradient_slsqp_2,options={'disp': True, 'maxiter': 300, 'eps': 0})
+    result = minimize(target_func, x0=x0, callback=callback_func, method="SLSQP", jac=gradient_slsqp_2,options={'disp': True, 'maxiter': 495, 'eps': 0, "ftol":0})
     iteration_number = [i for i in range(0, len(points))]
     plt.scatter(iteration_number, points, color='g', linestyle='--')
 

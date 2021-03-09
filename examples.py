@@ -28,18 +28,19 @@ def energy(phi):
     return energy.data[0][0]
 
 def der(phi,d,N): #d = delta(argument)
+    N = N-1
     a = energy(phi)
     phi_d = phi
     phi_d[N] = phi_d[N]+d                    # phi+d_phi
-    return ((energy(phi_d)-a)/d).real
+    return 2*((energy(phi_d)-a)/d).real
 
 
 def plot_graph(der,phi,N):
-    xrange=np.arange(0,0.2,0.005)
+    xrange=np.arange(0,0.00000001,0.000000001)
     yrange=[der(phi,i,N) for i in xrange]
     plt.plot(xrange,yrange)
     plt.xlabel('delta theta')
     plt.ylabel('mean of gradient')
     plt.show()
 
-plot_graph(der,phi,1)
+#print(der(phi,0.00000000001,2))
