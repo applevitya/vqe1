@@ -1,6 +1,7 @@
 from qiskit import *
 from qiskit.visualization import plot_histogram, plot_state_city
 from vqe import *
+from qiskit.quantum_info import Statevector
 from qiskit.providers.aer import QasmSimulator, StatevectorSimulator
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate, CCXGate
@@ -36,7 +37,7 @@ def schwinger_matrix(m, k): #k  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
 def U(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
-    return ((Y.transpose()).compose(Z.conjugate().compose(Y)))
+    return ((Y.conjugate().transpose()).compose(Z.conjugate().compose(Y)))
 
 
 def waveplate(phi, delta):
@@ -58,7 +59,7 @@ def derivative_U(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
 
-    return  Operator(RYGate(2 * phi + pi/2)).compose(Z.conjugate(), front=True).compose(Y.transpose(),front=True)
+    return  Operator(RYGate(2 * phi + pi)).compose(Z.conjugate(), front=True).compose(Y.transpose(),front=True)
 
 def U_circuit(phi, N):
     if N == 0:
@@ -141,7 +142,7 @@ def C_Gate_new(B, n):  # n-number of qubits
 def derivative_U2(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
-    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi / 2)).conjugate(), front= True)
+    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi)).conjugate(), front= True)
 
 def U_circuit2(phi, N):
     if N == 0:
@@ -225,16 +226,22 @@ def hadamard(phi,N,k):
     simulation = Aer.get_backend('statevector_simulator')
     stat_vector = execute(qc, simulation).result().get_statevector(qc)
     stat_vector_2  = execute(qc2, simulation).result().get_statevector(qc2)
-    total_1 = pow(np.real(stat_vector[0]),2)+pow(np.real(stat_vector[1]),2)+pow(np.real(stat_vector[2]),2)+pow(np.real(stat_vector[3]),2)
-    total_2 = pow(np.real(stat_vector_2[0]),2)+pow(np.real(stat_vector_2[1]),2)+pow(np.real(stat_vector_2[2]),2)+pow(np.real(stat_vector_2[3]),2)
 
-    return (8*total_1+8*total_2-8)
+    total_1 = np.sum((np.abs(stat_vector)**2)[:4])
+    total_2 = np.sum((np.abs(stat_vector_2)**2)[:4])
+    #total_1 = Statevector(stat_vector).probabilities([2])[0]
+    #total_2 = Statevector(stat_vector_2).probabilities([2])[0]
+
+    return  (4*total_1+4*total_2-4)
+
+
+
 
 def hadamard_test(phi, N):
     return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
 
 
-#phi = [1,2,2,3,2,2]
-
+phi = [1,1,2,2,2,2]
+print(hadamard_test(phi,1))
 
 

@@ -21,10 +21,10 @@ def schwinger(m):
 
 ############################################################
 
-phi = [1,2,2,3,2,2]
+phi = [1,1,2,2,2,2]
 def energy(phi):
     psi = (state_zero ^ state_zero) @ U_circuit(phi, 0)
-    energy = (psi @ schwinger(0)) @ ((psi).transpose())
+    energy = (psi @ schwinger(0)) @ ((psi).conjugate().transpose())
     return energy.data[0][0]
 
 def der(phi,d,N): #d = delta(argument)
@@ -32,7 +32,7 @@ def der(phi,d,N): #d = delta(argument)
     a = energy(phi)
     phi_d = phi
     phi_d[N] = phi_d[N]+d                    # phi+d_phi
-    return 2*((energy(phi_d)-a)/d).real
+    return ((energy(phi_d)-a)/d)
 
 
 def plot_graph(der,phi,N):
@@ -43,4 +43,5 @@ def plot_graph(der,phi,N):
     plt.ylabel('mean of gradient')
     plt.show()
 
-#print(der(phi,0.00000000001,2))
+print(der(phi,1e-13,1))
+print(energy(phi))
