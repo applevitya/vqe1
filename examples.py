@@ -46,4 +46,3 @@ def plot_graph(der,phi,N):
 #print(der(phi,1e-13,1))
 #print(energy(phi))
 phi=[5.74570487 ,1.6947552 , 5.49778714, 6.21556525 ,5.49778715, 4.12811098]
-print((state_zero ^ state_zero) @ U_circuit(phi, 0))
