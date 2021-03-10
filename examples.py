@@ -17,7 +17,7 @@ Z = Operator(ZGate())
 
 state_zero = Operator(np.array([[1.0],[0.0]]))
 def schwinger(m):
-    return I.expand(I)+2*X.expand(X)+2*Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))
+    return I.expand(I)+X.expand(X)+Y.expand(Y)+0.5*(-Z.expand(I)+Z.expand(Z)+m*I.expand(Z)-m*Z.expand(I))
 
 ############################################################
 
@@ -43,5 +43,7 @@ def plot_graph(der,phi,N):
     plt.ylabel('mean of gradient')
     plt.show()
 
-print(der(phi,1e-13,1))
-print(energy(phi))
+#print(der(phi,1e-13,1))
+#print(energy(phi))
+phi=[5.74570487 ,1.6947552 , 5.49778714, 6.21556525 ,5.49778715, 4.12811098]
+print((state_zero ^ state_zero) @ U_circuit(phi, 0))

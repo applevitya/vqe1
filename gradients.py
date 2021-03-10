@@ -238,10 +238,9 @@ def hadamard(phi,N,k):
 
 
 def hadamard_test(phi, N):
-    return hadamard(phi,N,1)+2*hadamard(phi,N,2)+2*hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
+    return hadamard(phi,N,1)+hadamard(phi,N,2)+hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
 
 
-phi = [1,1,2,2,2,2]
-print(hadamard_test(phi,1))
+
 
 

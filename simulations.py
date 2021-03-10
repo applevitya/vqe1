@@ -12,7 +12,7 @@ from vqe import *
 from gradients import *
 from spsa import minimize_spsa
 from scipy.optimize import minimize
-
+from examples import energy
 
 # Log functions
 def log_header(setup, H, logfile):
@@ -102,19 +102,20 @@ H = MeanValue(setup, schwinger(options.m))
 
 
 # Optimization
+
 x0 = np.random.uniform(0, 2 * pi, 6)
 def optimization():
     points = []
     def callback_func(x):
-        points.append(H(x)[0])
-        return x
+        points.append(np.real(energy(x)))
+        return False
         # log_data(stdout, x, result)
         # log_data(logfile, x, result)
 
 
 
     def target_func(x):
-        return H(x)[0]
+        return np.real(energy(x))
 
 
 
@@ -160,6 +161,7 @@ d1 = []
 for j in range(0, 1, 1):
     d2 = optimization()
     d1.append(d2)
+    print(d2)
 
 #plt.hist(d1, bins=10)
 plt.show()
