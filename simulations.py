@@ -10,7 +10,7 @@ from math import pi
 from matplotlib import pyplot as plt
 from vqe import *
 from gradients import *
-from spsa import minimize_spsa
+
 from scipy.optimize import minimize
 from examples import energy
 
