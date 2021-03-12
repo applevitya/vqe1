@@ -183,7 +183,9 @@ def B2(phi, N, k):
 
     return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
 
+##########################################
 
+SH = 60000
 def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
@@ -200,14 +202,14 @@ def hadamard(phi,N,k):
 
     backend = BasicAer.get_backend('qasm_simulator')
     backend_2 = BasicAer.get_backend('qasm_simulator')
-    job = execute(qc, backend, shots=10000)
-    job2 = execute(qc2, backend_2,shots=10000)
+    job = execute(qc, backend, shots=SH)
+    job2 = execute(qc2, backend_2,shots=SH)
     total = job.result().get_counts(qc)['0']
     total2 = job2.result().get_counts(qc2)['0']
     #plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
     #qc.draw('mpl').show()
     #plt.show()
-    return 4*total/10000+4*total2/10000-4
+    return 4*total/SH+4*total2/SH-4
 
 
 def hadamard121(phi,N,k):

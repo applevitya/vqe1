@@ -3,7 +3,7 @@ from math import *
 from scipy.stats._multivariate import ortho_group
 from scipy.optimize import minimize
 import logging
-import datetime
+
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate
 

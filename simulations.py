@@ -164,6 +164,6 @@ for j in range(0, 1, 1):
     print(d2)
 
 #plt.hist(d1, bins=10)
-#plt.show()
+plt.show()
 
 
