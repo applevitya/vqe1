@@ -1,6 +1,6 @@
 from qiskit import *
 from qiskit.visualization import plot_histogram, plot_state_city
-from vqe import *
+from math import *
 from qiskit.quantum_info import Statevector
 from qiskit.providers.aer import QasmSimulator, StatevectorSimulator
 from qiskit.quantum_info.operators import Operator
@@ -184,7 +184,7 @@ def B2(phi, N, k):
     return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
 
 
-def hadamard121(phi,N,k):
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N,k)),[0,1,2])
@@ -207,10 +207,10 @@ def hadamard121(phi,N,k):
     #plt = plot_histogram(job.result().get_counts(qc), color='midnightblue', title="New Histogram")
     #qc.draw('mpl').show()
     #plt.show()
-    return 8*total/10000+8*total2/10000-8
+    return 4*total/10000+4*total2/10000-4
 
 
-def hadamard(phi,N,k):
+def hadamard121(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N, k)),[0,1,2])
