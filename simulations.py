@@ -115,7 +115,7 @@ def optimization():
 
 
     def target_func(x):
-        return np.real(energy(x))
+        return H(x)[0] #np.real(energy(x))
 
 
 
@@ -159,11 +159,13 @@ def optimization():
 
 d1 = []
 for j in range(0, 1, 1):
-    d2 = optimization()
-    d1.append(d2)
-    print(d2)
+    #d2 = optimization()
+    #d1.append(d2)
+    print(d1)
 
 #plt.hist(d1, bins=10)
-plt.show()
+#plt.show()
 
-
+phi = [1,1,1,1,1,1]
+print(H(phi)[0])
+print(energy(phi))

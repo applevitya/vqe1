@@ -185,7 +185,7 @@ def B2(phi, N, k):
 
 ##########################################
 
-SH = 50
+SH = 100
 def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
