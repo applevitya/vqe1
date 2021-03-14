@@ -25,14 +25,18 @@ def schwinger(m):
 
 ############################################################
 
-phi = [1, 1, 2, 2, 2, 2]
 
+
+
+def states(phi):
+    psi = (state_zero ^ state_zero) @ U_circuit(phi, 0)
+    energy = (psi @ schwinger(0)) @ ((psi).conjugate().transpose())
+    return psi.data.transpose()[0] #energy.data[0][0]
 
 def energy(phi):
     psi = (state_zero ^ state_zero) @ U_circuit(phi, 0)
     energy = (psi @ schwinger(0)) @ ((psi).conjugate().transpose())
     return energy.data[0][0]
-
 
 def der(phi, d, N):  # d = delta(argument)
     N = N - 1
@@ -49,5 +53,10 @@ def plot_graph(der, phi, N):
     plt.xlabel('delta theta')
     plt.ylabel('mean of gradient')
     plt.show()
+
+#############################################################
+
+
+
 
 
