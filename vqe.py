@@ -6,7 +6,7 @@ import logging
 
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate
-from examples import states
+
 
 
 def waveplate(phi, delta):
