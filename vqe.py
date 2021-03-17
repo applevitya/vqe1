@@ -6,6 +6,7 @@ import logging
 
 from qiskit.quantum_info.operators import Operator
 from qiskit.extensions import RXGate, RZGate, RYGate
+from examples import states
 
 
 def waveplate(phi, delta):
@@ -221,17 +222,19 @@ class Setup:
                 self.motors2.wait(1)
         else:
             # Phase between HV and VH components in Sagnac interferometer
-            phase = 0.34
+            phase = 0
             # State after optical isolator
             state = np.array([np.sqrt(0.5), np.sqrt(0.5)])
             # State after pump waveplates
             state = waveplate(x[1], self.retardances[1]) @ waveplate(x[0], self.retardances[0]) @ state
             # State from biphoton source
-            state = np.array([0, state[0], state[1]*np.exp(1j*phase), 0])
+            state = np.array([0, state[0], state[1], 0])
             # State before Wollastons
             U1 = waveplate(x[3], self.retardances[3]) @ waveplate(x[2], self.retardances[2])
             U2 = waveplate(x[5], self.retardances[5]) @ waveplate(x[4], self.retardances[4])
             state = np.kron(U1, U2) @ state
+
+            #state = states(x)
             # Transform to density matrix
             state = np.tensordot(state, state.conjugate(), axes=0)
             # Apply noise if required
@@ -240,6 +243,7 @@ class Setup:
                 #k2 = k1 # Same noise for the 2nd qubit
                 k2 = [np.eye(2)] # 2nd qubit without noise
                 state = apply_krauses(state, tensordot_krauses(k1, k2))
+
             self._state = state
         
         logging.getLogger(__name__).debug('Setup move finished')            
@@ -262,10 +266,16 @@ class Setup:
         else:
             p = np.abs(self._state.diagonal())
             logging.getLogger(__name__).debug('Calculated probabilities = %s', p)
-            mean = self.intensity * self.exposure_time/1000 * p / self.efficiencies
+            mean =  self.intensity*self.exposure_time/1000*p/self.efficiencies  
             raw_counts = np.random.poisson(mean)
 
-        counts = raw_counts * self.efficiencies
+#'''self.intensity *'' ''* p / self.efficiencies'''
+
+
+##########ATTENTION!!!!!!!
+
+
+        counts = raw_counts* self.efficiencies
         logging.getLogger(__name__).info('Measured raw counts = %s, effective counts = %s', raw_counts, counts)
         return counts
 
