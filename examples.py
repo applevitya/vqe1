@@ -1,18 +1,14 @@
 from qiskit import *
-from qiskit.visualization import plot_histogram
+
 import numpy as np
 import matplotlib.pyplot as plt
-from qiskit.tools.visualization import circuit_drawer
 from math import *
-from qiskit.aqua.operators import One
-from qiskit.quantum_info.operators import Operator, Pauli
-from qiskit.extensions import RXGate, RZGate, RYGate, HGate, XGate, IGate, CXGate, YGate, ZGate, CCXGate
-from gradients import U_circuit, U_circuit2
+from qiskit.quantum_info.operators import Operator
+from qiskit.extensions import  XGate, IGate, YGate, ZGate
+from gradients import U_circuit
 from numpy.random import random, multinomial
-from qutip import tensor, Qobj
+from vqe import tensordot_krauses
 
-def getQobj(psi):
-    return Qobj(psi)
 ############################################################
 I = Operator(IGate())
 X = Operator(XGate())
@@ -67,53 +63,53 @@ def probability(psi, N):  # probabilities of coincidence
     R = np.array([[1 / np.sqrt(2)], [1j / np.sqrt(2)]])
     L = np.array([[1 / np.sqrt(2)], [-1j / np.sqrt(2)]])
     if N == 1: #HH
-        M = np.dot((tensor(getQobj(H), getQobj(H))),
-                   (np.transpose(tensor(getQobj(H), getQobj(H)).conj())))
+        M = np.dot((np.kron(H, H)),
+                   (np.transpose(np.kron(H, H).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 2: #HV
-        M = np.dot((tensor(getQobj(H), getQobj(V))),
-                   (np.transpose(tensor(getQobj(H), getQobj(V)).conj())))
+        M = np.dot((np.kron(H, V)),
+                   (np.transpose(np.kron(H, V).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 3: #VH
-        M = np.dot((tensor(getQobj(V), getQobj(H))),
-                   (np.transpose(tensor(getQobj(V), getQobj(H)).conj())))
+        M = np.dot((np.kron(V, H)),
+                   (np.transpose(np.kron(V, H).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 4: #VV
-        M = np.dot((tensor(getQobj(V), getQobj(V))),
-                   (np.transpose(tensor(getQobj(V), getQobj(V)).conj())))
+        M = np.dot((np.kron(V, V)),
+                   (np.transpose(np.kron(V, V).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 5:  # DD
-        M = np.dot((tensor(getQobj(D), getQobj(D))),
-                   (np.transpose(tensor(getQobj(D), getQobj(D)).conj())))
+        M = np.dot((np.kron(D, D)),
+                   (np.transpose(np.kron(D, D).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 6:  # DA
-        M = np.dot((tensor(getQobj(D), getQobj(A))),
-                   (np.transpose(tensor(getQobj(D), getQobj(A)).conj())))
+        M = np.dot((np.kron(D, A)),
+                   (np.transpose(np.kron(D, A).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 7:  # AD
-        M = np.dot((tensor(getQobj(A), getQobj(D))),
-                   (np.transpose(tensor(getQobj(A), getQobj(D)).conj())))
+        M = np.dot((np.kron(A, D)),
+                   (np.transpose(np.kron(A, D).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 8:  # AA
-        M = np.dot((tensor(getQobj(A), getQobj(A))),
-                   (np.transpose(tensor(getQobj(A), getQobj(A)).conj())))
+        M = np.dot((np.kron(A, A)),
+                   (np.transpose(np.kron(A, A).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
 
     if N == 9:  # RR
-        M = np.dot((tensor(getQobj(R), getQobj(R))),
-                   (np.transpose(tensor(getQobj(R), getQobj(R)).conj())))
+        M = np.dot((np.kron(R, R)),
+                   (np.transpose(np.kron(R, R).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 10:  # RL
-        M = np.dot((tensor(getQobj(R), getQobj(L))),
-                   (np.transpose(tensor(getQobj(R), getQobj(L)).conj())))
+        M = np.dot((np.kron(R, L)),
+                   (np.transpose(np.kron(R, L).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 11:  # LR
-        M = np.dot((tensor(getQobj(L), getQobj(R))),
-                   (np.transpose(tensor(getQobj(L), getQobj(R)).conj())))
+        M = np.dot((np.kron(L, R)),
+                   (np.transpose(np.kron(L, R).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
     if N == 12:  # LL
-        M = np.dot((tensor(getQobj(L), getQobj(L))),
-                   (np.transpose(tensor(getQobj(L), getQobj(L)).conj())))
+        M = np.dot((np.kron(L, L)),
+                   (np.transpose(np.kron(L, L).conj())))
         p = np.trace(np.dot(M, np.dot(psi, np.transpose(psi.conj()))))
 
     return p.real
@@ -135,10 +131,17 @@ def probabilityRandom_RL(psi, N, n):
 
 
 def schwinger_samples(phi,n):
-    psi = np.dot(U_circuit(phi,0).data,tensor(getQobj(state_zero.data), getQobj(state_zero.data)))
+    psi = U_circuit(phi,0).data @ tensordot_krauses(state_zero.data,state_zero.data)
     II = probabilityRandom_HV(psi,0,n)+probabilityRandom_HV(psi,1,n)+probabilityRandom_HV(psi,2,n)+probabilityRandom_HV(psi,3,n)
     XX = probabilityRandom_DA(psi,0,n)-probabilityRandom_DA(psi,1,n)-probabilityRandom_DA(psi,2,n)+probabilityRandom_DA(psi,3,n)
     YY = probabilityRandom_RL(psi,0,n)-probabilityRandom_RL(psi,1,n)-probabilityRandom_RL(psi,2,n)+probabilityRandom_RL(psi,3,n)
     ZZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)+probabilityRandom_HV(psi,3,n)
     ZI = probabilityRandom_HV(psi,0,n)+probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
     return (II+XX+YY+1/2*(ZZ-ZI))/n
+
+
+'''
+phi = [1,1,1,1,1,1]
+print(schwinger_samples(phi,1000))
+'''
+
