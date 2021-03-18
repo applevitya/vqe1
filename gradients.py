@@ -186,7 +186,7 @@ def B2(phi, N, k):
 ##########################################
 
 SH = 100
-def hadamard121(phi,N,k):
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N,k)),[0,1,2])
@@ -212,7 +212,7 @@ def hadamard121(phi,N,k):
     return 4*total/SH+4*total2/SH-4
 
 
-def hadamard(phi,N,k):
+def hadamard121(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N, k)),[0,1,2])
