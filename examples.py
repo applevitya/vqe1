@@ -140,8 +140,3 @@ def schwinger_samples(phi,n):
     return (II+XX+YY+1/2*(ZZ-ZI))/n
 
 
-'''
-phi = [1,1,1,1,1,1]
-print(schwinger_samples(phi,1000))
-'''
-
