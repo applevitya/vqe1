@@ -55,7 +55,7 @@ def plot_graph(der, phi, N):
 
 
 
-def probability(psi, N):  # probabilities of coincidence
+def probability121(psi, N):  # probabilities of coincidence
     H = np.array([[1.0], [0.0]])
     V = np.array([[0.0], [1.0]])
     D = np.array([[1 / np.sqrt(2)], [1 / np.sqrt(2)]])
@@ -114,6 +114,66 @@ def probability(psi, N):  # probabilities of coincidence
 
     return p.real
 
+def probability(psi, N):  # probabilities of coincidence
+    H = np.array([[1.0], [0.0]])
+    V = np.array([[0.0], [1.0]])
+    D = np.array([[1 / np.sqrt(2)], [1 / np.sqrt(2)]])
+    A = np.array([[1 / np.sqrt(2)], [-1 / np.sqrt(2)]])
+    R = np.array([[1 / np.sqrt(2)], [1j / np.sqrt(2)]])
+    L = np.array([[1 / np.sqrt(2)], [-1j / np.sqrt(2)]])
+    if N == 1: #HH
+        M = np.dot((np.kron(H, H)),(np.transpose(np.kron(H, H).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 2: #HV
+        M = np.dot((np.kron(H, V)),
+                   (np.transpose(np.kron(H, V).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 3: #VH
+        M = np.dot((np.kron(V, H)),
+                   (np.transpose(np.kron(V, H).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 4: #VV
+        M = np.dot((np.kron(V, V)),
+                   (np.transpose(np.kron(V, V).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 5:  # DD
+        M = np.dot((np.kron(D, D)),
+                   (np.transpose(np.kron(D, D).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 6:  # DA
+        M = np.dot((np.kron(D, A)),
+                   (np.transpose(np.kron(D, A).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 7:  # AD
+        M = np.dot((np.kron(A, D)),
+                   (np.transpose(np.kron(A, D).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 8:  # AA
+        M = np.dot((np.kron(A, A)),
+                   (np.transpose(np.kron(A, A).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+
+    if N == 9:  # RR
+        M = np.dot((np.kron(R, R)),
+                   (np.transpose(np.kron(R, R).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 10:  # RL
+        M = np.dot((np.kron(R, L)),
+                   (np.transpose(np.kron(R, L).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 11:  # LR
+        M = np.dot((np.kron(L, R)),
+                   (np.transpose(np.kron(L, R).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+    if N == 12:  # LL
+        M = np.dot((np.kron(L, L)),
+                   (np.transpose(np.kron(L, L).conj())))
+        p = np.dot(psi.conjugate().transpose(),(np.dot((np.dot(M.conjugate().transpose(),M)),psi)))
+
+    return p.real[0][0]
+
+
+
 def probabilityRandom_HV(psi, N, n):  # n-value of samples
     probabilityArray = np.random.multinomial(n, [probability(psi, 1), probability(psi, 2), probability(psi, 3),
                                                  probability(psi, 4)], 1)
@@ -138,5 +198,4 @@ def schwinger_samples(phi,n):
     ZZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)+probabilityRandom_HV(psi,3,n)
     ZI = probabilityRandom_HV(psi,0,n)+probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
     return (II+XX+YY+1/2*(ZZ-ZI))/n
-
 

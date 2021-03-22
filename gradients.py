@@ -10,7 +10,7 @@ import numpy as np
 from qiskit.test.mock import FakeVigo
 device_backend = FakeVigo()
 
-def schwinger_matrix(m, k): #k  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
+def schwinger_matrix(k): #k  #1+2XX+2YY+0.5(-ZI+ZZ+mIZ-mZI)
     I = Operator(IGate())
     X = Operator(XGate())
     Y = Operator(YGate())
@@ -99,7 +99,7 @@ def U_circuit(phi, N):
 
 def B(phi, N, k):
 
-    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit(phi, N),front= True),front=True)
+    return (U_circuit(phi, 0).conjugate().transpose()).compose(schwinger_matrix(k).compose(U_circuit(phi, N),front= True),front=True)
 
 
 def C_Gate(B):  # n-number of qubits
@@ -181,12 +181,12 @@ def U_circuit2(phi, N):
 
 def B2(phi, N, k):
 
-    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(0,k).compose(U_circuit2(phi, N),front= True),front= True)
+    return (U_circuit2(phi, 0).conjugate().transpose()).compose(schwinger_matrix(k).compose(U_circuit2(phi, N),front= True),front= True)
 
 ##########################################
 
-SH = 100
-def hadamard(phi,N,k):
+SH = 10000
+def hadamard121(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N,k)),[0,1,2])
@@ -212,7 +212,7 @@ def hadamard(phi,N,k):
     return 4*total/SH+4*total2/SH-4
 
 
-def hadamard121(phi,N,k):
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N, k)),[0,1,2])
