@@ -147,7 +147,7 @@ def optimization():
     # a0=0.05/(0.2*abs(m)+1), af=0.005/(0.2*abs(m)+1), b0=0.1, bf=0.02)
     result = minimize(target_func, x0=x0, callback=callback_func, method="SLSQP",jac = gradient_slsqp_2,options={'disp':False, 'maxiter': 200, 'eps': 0, "ftol":0})
     iteration_number = [i for i in range(0, len(points))]
-    plt.scatter(iteration_number, points, color='b',s = 2, linestyle='--')
+    plt.scatter(iteration_number, points, color='b',s = 1, linestyle='--')
 
     # Order operator
     O = MeanValue(setup, {'hh': (0, 0, 1, 0)})
