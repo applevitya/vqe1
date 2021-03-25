@@ -199,3 +199,6 @@ def schwinger_samples(phi,n):
     ZI = probabilityRandom_HV(psi,0,n)+probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
     return (II+XX+YY+1/2*(ZZ-ZI))/n
 
+phi = [1,1,1,1,1,1]
+print('istina', energy(phi))
+print('fin stat', schwinger_samples(phi, 10000))
