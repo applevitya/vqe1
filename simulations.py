@@ -103,12 +103,12 @@ H = MeanValue(setup, schwinger(options.m))
 
 
 # Optimization
-shots  = sys.argv[1]
+#shots  = sys.argv[1]
 x0 = np.random.uniform(0, 2 * pi, 6)
 def optimization():
     points = []
     def callback_func(x):
-        points.append(schwinger_samples(x,1000000000000000))
+        points.append(energy(x))
         return False
         # log_data(stdout, x, result)
         # log_data(logfile, x, result)
@@ -116,7 +116,7 @@ def optimization():
 
 
     def target_func(x):
-        return schwinger_samples(x,1000000000000000) #np.real(energy(x))
+        return np.real(energy(x))
 
 
 
@@ -157,13 +157,13 @@ def optimization():
 
     return target_func(result.x)
 
-
+"""
 d1 = []
-for j in range(0, 1, 1):
+for j in range(0, 5):
     d2 = optimization()
     d1.append(d2)
     print(d2)
 
 #plt.hist(d1, bins=10)
-#plt.show()
-print(shots)
+plt.show()
+"""

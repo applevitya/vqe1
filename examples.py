@@ -25,7 +25,7 @@ def schwinger(m):
 
 ############################################################
 
-phi = [1, 1, 2, 2, 2, 2]
+
 
 
 def energy(phi):
@@ -196,9 +196,6 @@ def schwinger_samples(phi,n):
     XX = probabilityRandom_DA(psi,0,n)-probabilityRandom_DA(psi,1,n)-probabilityRandom_DA(psi,2,n)+probabilityRandom_DA(psi,3,n)
     YY = probabilityRandom_RL(psi,0,n)-probabilityRandom_RL(psi,1,n)-probabilityRandom_RL(psi,2,n)+probabilityRandom_RL(psi,3,n)
     ZZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)+probabilityRandom_HV(psi,3,n)
-    ZI = probabilityRandom_HV(psi,0,n)+probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
-    return (II+XX+YY+1/2*(ZZ-ZI))/n
+    IZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)+probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
+    return (II+XX+YY+1/2*(ZZ-IZ))/n
 
-phi = [1,1,1,1,1,1]
-print('istina', energy(phi))
-print('fin stat', schwinger_samples(phi, 10000))
