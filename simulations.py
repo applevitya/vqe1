@@ -108,7 +108,7 @@ x0 = np.random.uniform(0, 2 * pi, 6)
 def optimization():
     points = []
     def callback_func(x):
-        points.append(energy(x))
+        points.append(schwinger_samples(x,100000000))
         return False
         # log_data(stdout, x, result)
         # log_data(logfile, x, result)
@@ -116,7 +116,7 @@ def optimization():
 
 
     def target_func(x):
-        return np.real(energy(x))
+        return schwinger_samples(x,1000000000)      #np.real(energy(x))
 
 
 

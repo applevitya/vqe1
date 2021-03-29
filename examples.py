@@ -198,4 +198,3 @@ def schwinger_samples(phi,n):
     ZZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)-probabilityRandom_HV(psi,2,n)+probabilityRandom_HV(psi,3,n)
     IZ = probabilityRandom_HV(psi,0,n)-probabilityRandom_HV(psi,1,n)+probabilityRandom_HV(psi,2,n)-probabilityRandom_HV(psi,3,n)
     return (II+XX+YY+1/2*(ZZ-IZ))/n
-
