@@ -142,7 +142,7 @@ def C_Gate_new(B, n):  # n-number of qubits
 def derivative_U2(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
-    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi)).conjugate(), front= True)
+    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi)).transpose().conjugate(), front= True)
 
 def U_circuit2(phi, N):
     if N == 0:
