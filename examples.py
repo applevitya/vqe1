@@ -26,8 +26,6 @@ def schwinger(m):
 ############################################################
 
 
-
-
 def energy(phi):
     psi = (state_zero ^ state_zero) @ U_circuit(phi, 0)
     energy = (psi @ schwinger(0)) @ ((psi).conjugate().transpose())

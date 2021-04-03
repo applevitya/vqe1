@@ -142,7 +142,7 @@ def C_Gate_new(B, n):  # n-number of qubits
 def derivative_U2(phi, delta):
     Y = Operator(RYGate(2 * phi))
     Z = Operator(RZGate(delta))
-    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi)).transpose().conjugate(), front= True)
+    return -Y.compose(Z.conjugate(), front=True).compose(Operator(RYGate(-2 * phi + pi)), front= True)
 
 def U_circuit2(phi, N):
     if N == 0:
@@ -186,7 +186,7 @@ def B2(phi, N, k):
 ##########################################
 
 SH = 63000
-def hadamard(phi,N,k):
+def hadamard121(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi,N,k)),[0,1,2])
@@ -212,7 +212,7 @@ def hadamard(phi,N,k):
     return 4*total/SH+4*total2/SH-4
 
 
-def hadamard121(phi,N,k):
+def hadamard(phi,N,k):
     qc = QuantumCircuit(3, 1)
     qc.h(2)
     qc.append(C_Gate(B(phi, N, k)),[0,1,2])
@@ -241,6 +241,10 @@ def hadamard121(phi,N,k):
 
 def hadamard_test(phi, N):
     return hadamard(phi,N,1)+hadamard(phi,N,2)+hadamard(phi,N,3)+0.5*hadamard(phi,N,4)-0.5*hadamard(phi,N,5)+0.5*0*hadamard(phi,N,6)-0.5*0*hadamard(phi,N,7)
+
+
+
+
 
 
 
